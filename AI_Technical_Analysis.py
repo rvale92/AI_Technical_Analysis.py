@@ -7,95 +7,101 @@ from prophet import Prophet
 # Set up Streamlit app
 st.set_page_config(layout="wide")
 st.title("AI-Powered Technical Stock Analysis Dashboard")
-st.sidebar.header("Configuration")
 
-# Input for stock ticker and date range
-ticker = st.sidebar.text_input("Enter Stock Ticker (e.g., AAPL):", "AAPL")
+# Create tabs
+tab1, tab2 = st.tabs(["Tickers", "AI Analysis"])
 
-# --- Add ticker suggestions ---
-ticker_suggestions = ["TSLA", "SMCI", "CSO", "IBM", "INTC", "AMD", "META", "MSTR", "NVDA", "MSFT",
-                      "NET", "GOOG", "BIDI", "BABA", "SHOP", "AMZN", "BTDR", "RIOT", "MARA", "EXOD",
-                      "BTC", "GSOL", "ARKK", "FDIG", "ETHE", "GBTC", "COIN"]
-st.sidebar.markdown("**Suggestions:** " + ", ".join(ticker_suggestions))
+with tab1:
+    st.header("Configuration")
 
-start_date = st.sidebar.date_input("Start Date", value=pd.to_datetime("2023-01-01"))
-end_date = st.sidebar.date_input("End Date", value=pd.to_datetime("2024-12-14"))
+    # Input for stock ticker and date range
+    ticker = st.text_input("Enter Stock Ticker (e.g., AAPL):", "AAPL")
 
-# Fetch stock data
-if st.sidebar.button("Fetch Data"):
-    st.session_state["stock_data"] = yf.download(ticker, start=start_date, end=end_date)
-    st.success("Stock data loaded successfully!")
+    # --- Add ticker suggestions ---
+    ticker_suggestions = ["TSLA", "SMCI", "CSO", "IBM", "INTC", "AMD", "META", "MSTR", "NVDA", "MSFT",
+                          "NET", "GOOG", "BIDI", "BABA", "SHOP", "AMZN", "BTDR", "RIOT", "MARA", "EXOD",
+                          "BTC", "GSOL", "ARKK", "FDIG", "ETHE", "GBTC", "COIN"]
+    st.markdown("**Suggestions:** " + ", ".join(ticker_suggestions))
 
-# Check if data is available
-if "stock_data" in st.session_state:
-    data = st.session_state["stock_data"]
+    start_date = st.date_input("Start Date", value=pd.to_datetime("2023-01-01"))
+    end_date = st.date_input("End Date", value=pd.to_datetime("2024-12-14"))
 
-    # Plot candlestick chart
-    fig = go.Figure(data=[go.Candlestick(
-        x=data.index,
-        open=data['Open'],
-        high=data['High'],
-        low=data['Low'],
-        close=data['Close'],
-        name="Candlestick"
-    )])
+    # Fetch stock data
+    if st.button("Fetch Data"):
+        st.session_state["stock_data"] = yf.download(ticker, start=start_date, end=end_date)
+        st.success("Stock data loaded successfully!")
 
-    # Sidebar: Select technical indicators
-    st.sidebar.subheader("Technical Indicators")
-    indicators = st.sidebar.multiselect(
-        "Select Indicators:",
-        ["20-Day SMA", "50-Day SMA", "20-Day EMA", "50-Day EMA", "20-Day Bollinger Bands", "VWAP", "RSI", "MACD"],
-        default=["20-Day SMA"]
-    )
+    # Check if data is available
+    if "stock_data" in st.session_state:
+        data = st.session_state["stock_data"]
 
-    # Helper function to add indicators to the chart
-    def add_indicator(indicator):
-        if indicator == "20-Day SMA":
-            sma = data['Close'].rolling(window=20).mean()
-            fig.add_trace(go.Scatter(x=data.index, y=sma, mode='lines', name='SMA (20)'))
-        elif indicator == "50-Day SMA":
-            sma = data['Close'].rolling(window=50).mean()
-            fig.add_trace(go.Scatter(x=data.index, y=sma, mode='lines', name='SMA (50)'))
-        elif indicator == "20-Day EMA":
-            ema = data['Close'].ewm(span=20).mean()
-            fig.add_trace(go.Scatter(x=data.index, y=ema, mode='lines', name='EMA (20)'))
-        elif indicator == "50-Day EMA":
-            ema = data['Close'].ewm(span=50).mean()
-            fig.add_trace(go.Scatter(x=data.index, y=ema, mode='lines', name='EMA (50)'))
-        elif indicator == "20-Day Bollinger Bands":
-            sma = data['Close'].rolling(window=20).mean()
-            std = data['Close'].rolling(window=20).std()
-            bb_upper = sma + 2 * std
-            bb_lower = sma - 2 * std
-            fig.add_trace(go.Scatter(x=data.index, y=bb_upper, mode='lines', name='BB Upper'))
-            fig.add_trace(go.Scatter(x=data.index, y=bb_lower, mode='lines', name='BB Lower'))
-        elif indicator == "VWAP":
-            data['VWAP'] = (data['Close'] * data['Volume']).cumsum() / data['Volume'].cumsum()
-            fig.add_trace(go.Scatter(x=data.index, y=data['VWAP'], mode='lines', name='VWAP'))
-        elif indicator == "RSI":
-            delta = data['Close'].diff()
-            gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
-            loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
-            rs = gain / loss
-            rsi = 100 - (100 / (1 + rs))
-            fig.add_trace(go.Scatter(x=data.index, y=rsi, mode='lines', name='RSI'))
-        elif indicator == "MACD":
-            ema_12 = data['Close'].ewm(span=12).mean()
-            ema_26 = data['Close'].ewm(span=26).mean()
-            macd = ema_12 - ema_26
-            signal = macd.ewm(span=9).mean()
-            fig.add_trace(go.Scatter(x=data.index, y=macd, mode='lines', name='MACD'))
-            fig.add_trace(go.Scatter(x=data.index, y=signal, mode='lines', name='Signal'))
+        # Plot candlestick chart
+        fig = go.Figure(data=[go.Candlestick(
+            x=data.index,
+            open=data['Open'],
+            high=data['High'],
+            low=data['Low'],
+            close=data['Close'],
+            name="Candlestick"
+        )])
 
-    # Add selected indicators to the chart
-    for indicator in indicators:
-        add_indicator(indicator)
+        # Sidebar: Select technical indicators
+        st.subheader("Technical Indicators")
+        indicators = st.multiselect(
+            "Select Indicators:",
+            ["20-Day SMA", "50-Day SMA", "20-Day EMA", "50-Day EMA", "20-Day Bollinger Bands", "VWAP", "RSI", "MACD"],
+            default=["20-Day SMA"]
+        )
 
-    fig.update_layout(xaxis_rangeslider_visible=False)
-    st.plotly_chart(fig)
+        # Helper function to add indicators to the chart
+        def add_indicator(indicator):
+            if indicator == "20-Day SMA":
+                sma = data['Close'].rolling(window=20).mean()
+                fig.add_trace(go.Scatter(x=data.index, y=sma, mode='lines', name='SMA (20)'))
+            elif indicator == "50-Day SMA":
+                sma = data['Close'].rolling(window=50).mean()
+                fig.add_trace(go.Scatter(x=data.index, y=sma, mode='lines', name='SMA (50)'))
+            elif indicator == "20-Day EMA":
+                ema = data['Close'].ewm(span=20).mean()
+                fig.add_trace(go.Scatter(x=data.index, y=ema, mode='lines', name='EMA (20)'))
+            elif indicator == "50-Day EMA":
+                ema = data['Close'].ewm(span=50).mean()
+                fig.add_trace(go.Scatter(x=data.index, y=ema, mode='lines', name='EMA (50)'))
+            elif indicator == "20-Day Bollinger Bands":
+                sma = data['Close'].rolling(window=20).mean()
+                std = data['Close'].rolling(window=20).std()
+                bb_upper = sma + 2 * std
+                bb_lower = sma - 2 * std
+                fig.add_trace(go.Scatter(x=data.index, y=bb_upper, mode='lines', name='BB Upper'))
+                fig.add_trace(go.Scatter(x=data.index, y=bb_lower, mode='lines', name='BB Lower'))
+            elif indicator == "VWAP":
+                data['VWAP'] = (data['Close'] * data['Volume']).cumsum() / data['Volume'].cumsum()
+                fig.add_trace(go.Scatter(x=data.index, y=data['VWAP'], mode='lines', name='VWAP'))
+            elif indicator == "RSI":
+                delta = data['Close'].diff()
+                gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
+                loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
+                rs = gain / loss
+                rsi = 100 - (100 / (1 + rs))
+                fig.add_trace(go.Scatter(x=data.index, y=rsi, mode='lines', name='RSI'))
+            elif indicator == "MACD":
+                ema_12 = data['Close'].ewm(span=12).mean()
+                ema_26 = data['Close'].ewm(span=26).mean()
+                macd = ema_12 - ema_26
+                signal = macd.ewm(span=9).mean()
+                fig.add_trace(go.Scatter(x=data.index, y=macd, mode='lines', name='MACD'))
+                fig.add_trace(go.Scatter(x=data.index, y=signal, mode='lines', name='Signal'))
 
+        # Add selected indicators to the chart
+        for indicator in indicators:
+            add_indicator(indicator)
+
+        fig.update_layout(xaxis_rangeslider_visible=False)
+        st.plotly_chart(fig)
+
+with tab2:
+    st.header("AI-Powered Analysis")
     # Analyze chart with Prophet
-    st.subheader("AI-Powered Analysis")
     if st.button("Run AI Analysis"):
         with st.spinner("Analyzing the chart, please wait..."):
             # Prepare data for Prophet
