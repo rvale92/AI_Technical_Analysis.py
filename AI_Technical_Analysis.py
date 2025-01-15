@@ -8,8 +8,8 @@ from prophet import Prophet
 st.set_page_config(layout="wide")
 st.title("AI-Powered Technical Stock Analysis Dashboard")
 
-# --- Modify sidebar label ---
-st.sidebar.header("Tickers")  # Changed sidebar header to "Tickers" 
+# --- Modify sidebar header ---
+st.sidebar.header("Tickers")  # Changed sidebar header to "Tickers"
 
 # Input for stock ticker and date range
 ticker = st.sidebar.text_input("Enter Stock Ticker (e.g., AAPL):", "AAPL")
