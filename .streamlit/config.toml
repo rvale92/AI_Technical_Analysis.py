@@ -1,0 +1,37 @@
+[server]
+port = 8501
+address = "localhost"
+enableCORS = true
+enableXsrfProtection = true
+headless = true
+enableWebsocketCompression = true
+enableStaticServing = false
+maxUploadSize = 200
+maxMessageSize = 200
+baseUrlPath = ""
+
+[browser]
+gatherUsageStats = false
+serverAddress = "localhost"
+
+[theme]
+base = "dark"
+primaryColor = "#00ADB5"
+backgroundColor = "#222831"
+secondaryBackgroundColor = "#393E46"
+textColor = "#FFFFFF"
+font = "sans serif"
+
+[logger]
+level = "info"
+
+[client]
+toolbarMode = "minimal"
+showErrorDetails = true
+
+[runner]
+fastReruns = true
+
+[global]
+developmentMode = false
+showWarningOnDirectExecution = true 

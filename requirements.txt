@@ -1,5 +1,10 @@
-streamlit
-yfinance==0.2.40
-pandas
-plotly
-prophet
+streamlit==1.32.0
+pandas==2.2.0
+numpy==1.26.4
+plotly==5.18.0
+yfinance==0.2.36
+scikit-learn==1.4.0
+ta==0.11.0
+python-dotenv==1.0.1
+requests==2.31.0
+pytest==8.0.0
