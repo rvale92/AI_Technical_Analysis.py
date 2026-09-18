@@ -1,107 +1,81 @@
-# AI-Powered Technical Stock Analysis Dashboard
+# Experimental ML Technical Analysis Dashboard
 
-A Streamlit application for comprehensive technical analysis of stocks and cryptocurrencies with AI-powered price predictions, trading strategies, and real-time market insights.
+A Python + Streamlit learning project for exploring market-data processing, technical indicators, forecasting, and machine-learning workflows.
 
-## Live Demo
+> **Portfolio note:** This is an experimental/educational project. It is not a production trading system and its forecasts should not be used as financial advice.
 
-Check out the live application at: [https://rvale92.github.io/AI_Technical_Analysis.py/](https://rvale92.github.io/AI_Technical_Analysis.py/)
+## What this project demonstrates
 
-## Features
+- Loading and cleaning market data
+- Calculating technical indicators such as RSI, MACD, and moving averages
+- Preparing feature sets for machine-learning models
+- Training a `RandomForestRegressor`
+- Experimenting with Prophet-based time-series forecasting
+- Building multi-page data applications with Streamlit
+- Presenting charts and model output interactively
 
-- **Real-time Market Data**: Fetch and analyze stock and crypto data from Yahoo Finance
-- **AI-Powered Predictions**: Machine learning models to predict future price movements
-- **Technical Indicators**: SMA, EMA, RSI, MACD, Bollinger Bands, Volume profiling
-- **Trading Strategies**: Backtest various trading strategies with performance metrics
-- **Interactive Visualization**: Responsive Plotly charts with dark theme UI
-- **Multi-page Interface**: Organized navigation with dedicated views for different analysis tasks
+## Tech stack
 
-## Project Structure
+- Python
+- Streamlit
+- Pandas / NumPy
+- scikit-learn
+- Prophet
+- yfinance
+- Plotly
 
+## Project structure
+
+```text
+AI_Technical_Analysis.py/
+├── Home.py
+├── backend/
+│   ├── ai_model.py
+│   ├── data_loader.py
+│   ├── indicators.py
+│   ├── ml_predictor.py
+│   └── utils.py
+├── pages/
+├── frontend/
+├── requirements.txt
+└── README.md
 ```
-AI_Technical_Analysis/
-├── Home.py                    # Main app entry point
-├── backend/                   # Backend functionality
-│   ├── data_loader.py         # Market data fetching with robust error handling
-│   ├── ml_predictor.py        # Machine learning prediction engine
-│   ├── indicators.py          # Technical indicators calculation
-│   ├── utils.py               # Utility functions
-│   └── ai_model.py            # AI model implementation
-├── pages/                     # Streamlit multi-page components
-│   ├── 1_🤖_ML_Predictions.py    # ML-based market predictions
-│   ├── 2_📈_Trading_Strategies.py # Trading strategy backtesting
-│   └── 3_📊_Market_Metrics.py     # Technical analysis metrics
-├── frontend/                  # UI components
-│   ├── components.py          # Reusable UI elements
-│   └── layout.py              # Layout configuration
-├── .streamlit/                # Streamlit configuration
-├── static/                    # Static assets
-├── requirements.txt           # Dependencies
-└── README.md                  # Documentation
-```
 
-## Installation
+## Current modeling approach
 
-1. Clone the repository:
+The repository currently includes two forecasting experiments:
+
+### Random Forest
+`backend/ml_predictor.py` builds features from OHLCV market data and technical indicators, then trains a `RandomForestRegressor` to estimate the next closing price.
+
+### Prophet
+`backend/ai_model.py` prepares closing-price data for Prophet and generates a forecast with trend and uncertainty output.
+
+## Known limitations
+
+This project intentionally remains a learning environment. Current limitations include:
+
+- The Random Forest workflow uses a conventional random train/test split rather than a time-series walk-forward evaluation.
+- Multi-day prediction uses a simplified iterative approach.
+- Market regime changes, transaction costs, slippage, and execution constraints are not modeled.
+- Model scores are learning metrics, not guarantees of future performance.
+
+Documenting these limitations is part of the project: the goal is to understand the full ML workflow, not to overstate model accuracy.
+
+## Run locally
+
 ```bash
 git clone https://github.com/rvale92/AI_Technical_Analysis.py.git
 cd AI_Technical_Analysis.py
-```
 
-2. Create a virtual environment (optional but recommended):
-```bash
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
+# Windows: venv\Scripts\activate
+# macOS/Linux: source venv/bin/activate
 
-3. Install dependencies:
-```bash
 pip install -r requirements.txt
-```
-
-## Usage
-
-Run the Streamlit app:
-```bash
 streamlit run Home.py
 ```
 
-The application will be available at http://localhost:8501
+## Why I built it
 
-## Key Features
-
-### ML Predictions
-- **Price Forecasting**: ML-powered price predictions with confidence metrics
-- **Model Insights**: Understand the factors influencing price predictions
-- **Confidence Metrics**: Evaluate prediction reliability with statistical metrics
-
-### Trading Strategies
-- **Strategy Backtesting**: Test trading strategies against historical data
-- **Performance Metrics**: Analyze returns, drawdown, Sharpe ratio, and win rate
-- **Strategy Comparison**: Compare multiple strategies side by side
-
-### Market Metrics
-- **Technical Indicators**: Comprehensive suite of technical analysis tools
-- **Volume Analysis**: Understand trading volume patterns and distribution
-- **Support/Resistance**: Identify key price levels
-
-## Technologies Used
-
-- **Streamlit**: Interactive web application framework
-- **Pandas/NumPy**: Data manipulation and analysis
-- **yfinance**: Yahoo Finance market data API
-- **Scikit-learn**: Machine learning algorithms
-- **Plotly**: Interactive charts and visualizations
-
-## Contributing
-
-Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/rvale92/AI_Technical_Analysis.py/issues).
-
-## License
-
-This project is [MIT](LICENSE) licensed.
-
-## Acknowledgements
-
-- [Yahoo Finance](https://finance.yahoo.com/) for market data
-- [Streamlit](https://streamlit.io/) for the web application framework
-- [Plotly](https://plotly.com/) for interactive visualizations 
+I built this project to strengthen my Python, data-processing, troubleshooting, and machine-learning fundamentals while experimenting with an end-to-end application rather than isolated scripts.
